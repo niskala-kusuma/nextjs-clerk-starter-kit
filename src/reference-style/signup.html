@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Apply the Google Font to the body */
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Basic transition for dark mode */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            /* Initial background for light mode - Controlled by JS adding/removing bg-white */
+            color: #000000; /* Default text color */
+        }
+
+        /* Direct CSS rule for body background when dark class is present on html */
+        /* This ensures the body background reliably changes with the dark class on html */
+        html.dark body {
+            background-color: #0a0a0a !important; /* Tailwind gray-950 equivalent */
+            color: #f3f4f6; /* Light gray text in dark mode (Tailwind gray-100 equivalent) */
+        }
+
+         /* Ensure sticky elements work correctly with padding */
+        main {
+            padding-top: 5rem; /* Adjust this value based on your header height */
+        }
+
+        /* Custom focus ring color for better visibility in dark mode */
+         :focus-visible {
+            outline: 2px solid;
+            outline-offset: 2px;
+            outline-color: currentColor; /* Use current text color for outline */
+         }
+         /* Ensure white outline in dark mode */
+         html.dark :focus-visible {
+             outline-color: #ffffff; /* White outline in dark mode */
+         }
+
+         /* Style for error messages */
+         .error-message {
+             color: #ef4444; /* Tailwind red-500 */
+             font-size: 0.875rem; /* text-sm */
+             margin-top: 0.25rem; /* mt-1 */
+         }
+         .dark .error-message {
+             color: #f87171; /* Tailwind red-400 */
+         }
+
+         /* Style for general response messages */
+          .response-message {
+             font-size: 0.875rem; /* text-sm */
+             margin-top: 1rem; /* mt-4 */
+             padding: 0.75rem; /* p-3 */
+             border-radius: 0.375rem; /* rounded-md */
+             text-align: center;
+          }
+          .response-message.success {
+              background-color: #d1fae5; /* Tailwind green-100 */
+              color: #065f46; /* Tailwind green-700 */
+               border: 1px solid #a7f3d0; /* Tailwind green-200 */
+          }
+           .dark .response-message.success {
+              background-color: #14532d; /* Tailwind green-900 */
+              color: #a7f3d0; /* Tailwind green-200 */
+               border: 1px solid #065f46; /* Tailwind green-700 */
+          }
+           .response-message.error {
+              background-color: #fee2e2; /* Tailwind red-100 */
+              color: #991b1b; /* Tailwind red-800 */
+               border: 1px solid #fecaca; /* Tailwind red-200 */
+          }
+           .dark .response-message.error {
+              background-color: #7f1d1d; /* Tailwind red-900 */
+              color: #fecaca; /* Tailwind red-200 */
+               border: 1px solid #ef4444; /* Tailwind red-500 */
+          }
+           .response-message.info {
+              background-color: #e0f2f7; /* Tailwind cyan-100 */
+              color: #0e7490; /* Tailwind cyan-700 */
+               border: 1px solid #bae6fd; /* Tailwind cyan-200 */
+          }
+            .dark .response-message.info {
+              background-color: #164e63; /* Tailwind cyan-900 */
+              color: #bae6fd; /* Tailwind cyan-200 */
+               border: 1px solid #0e7490; /* Tailwind cyan-700 */
+          }
+
+
+    </style>
+    <script>
+        // Tailwind configuration for JIT mode (optional, but good practice for CDN)
+        // This allows using arbitrary values and some features usually in tailwind.config.js
+        tailwind.config = {
+            darkMode: 'class', // Enable dark mode based on the 'dark' class on the html element
+            theme: {
+                extend: {
+                    colors: {
+                        // Using Tailwind's default gray palette for dark mode contrast
+                        // You could define custom colors here if needed, e.g.,
+                        // 'dark-bg-primary': '#1a1a1a',
+                        // 'dark-bg-secondary': '#2a2a2a',
+                    },
+                    borderRadius: {
+                        lg: '0.5rem', /* Defined explicit values for rounded corners */
+                        md: '0.375rem',
+                        sm: '0.25rem',
+                        xl: '0.75rem', /* Added xl for slightly larger corners */
+                        '2xl': '1rem', /* Added 2xl for larger corners on main blocks */
+                    },
+                    keyframes: {
+                        'accordion-down': {
+                            from: { height: '0' },
+                            to: { height: 'var(--radix-accordion-content-height)' },
+                        },
+                        'accordion-up': {
+                            from: { height: 'var(--radix-accordion-content-height)' },
+                            to: { height: '0' },
+                        },
+                    },
+                    animation: {
+                        'accordion-down': 'accordion-down 0.2s ease-out',
+                        'accordion-up': 'accordion-up 0.2s ease-out',
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-white text-black font-sans">
+
+    <header class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50 w-full">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex-shrink-0">
+                <a href="#" class="text-lg font-semibold text-black dark:text-white">Logo</a>
+            </div>
+
+            <nav class="hidden lg:flex flex-grow justify-center">
+                <ul class="flex space-x-6">
+                    <li><a href="#" class="transition-colors hover:text-gray-900 dark:hover:text-white text-gray-600 dark:text-gray-400">Home</a></li>
+                    <li><a href="#" class="transition-colors hover:text-gray-900 dark:hover:text-white text-gray-600 dark:text-gray-400">Blog</a></li>
+                    <li><a href="#" class="transition-colors hover:text-gray-900 dark:hover:text-white text-gray-600 dark:text-gray-400">About Us</a></li>
+                </ul>
+            </nav>
+
+            <div class="hidden lg:flex items-center space-x-4">
+                <button id="darkModeToggleDesktop" class="inline-flex items-center justify-center rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-100 p-2 text-black dark:text-white">
+                    <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+                <button class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-black text-white hover:bg-gray-800 dark:bg-gray-100 dark:text-black dark:hover:bg-gray-300 px-4 py-2">Login</button>
+            </div>
+
+            <div class="lg:hidden flex items-center space-x-2">
+                 <button id="darkModeToggleMobile" class="inline-flex items-center justify-center rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-100 p-2 text-black dark:text-white">
+                     <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+                <button id="mobileMenuTrigger" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-100 p-2 text-black dark:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div id="mobileMenu" class="fixed inset-0 bg-white dark:bg-gray-950 z-50 transform translate-x-full transition-transform duration-300 ease-in-out lg:hidden text-black dark:text-white">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center border-b border-gray-200 dark:border-gray-800">
+             <div class="text-lg font-semibold">Logo</div>
+            <button id="mobileMenuClose" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-100 p-2 text-black dark:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <nav class="flex flex-col p-4 space-y-4">
+            <a href="#" class="transition-colors hover:text-gray-900 dark:hover:text-white text-gray-600 dark:text-gray-400 text-lg py-2">Home</a>
+            <a href="#" class="transition-colors hover:text-gray-900 dark:hover:text-white text-gray-600 dark:text-gray-400 text-lg py-2">Blog</a>
+            <a href="#" class="transition-colors hover:text-gray-900 dark:hover:text-white text-gray-600 dark:text-gray-400 text-lg py-2">About Us</a>
+            <button class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-black text-white hover:bg-gray-800 dark:bg-gray-100 dark:text-black dark:hover:bg-gray-300 w-full text-left py-2 px-4">Login</button>
+        </nav>
+    </div>
+
+
+    <main class="container mx-auto px-4 py-8 flex justify-center items-center min-h-[calc(100vh-10rem)]"> <div class="w-full max-w-sm bg-white dark:bg-gray-900 text-black dark:text-gray-100 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-800">
+            <h2 class="text-2xl font-semibold text-center mb-6">Login</h2>
+
+            <form id="loginForm">
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                    <input type="email" id="email" name="email" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white placeholder-gray-400 dark:placeholder-gray-500" placeholder="Enter your email">
+                    <div id="emailError" class="error-message hidden"></div> </div>
+                <div class="mb-6">
+                    <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                    <input type="password" id="password" name="password" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white placeholder-gray-400 dark:placeholder-gray-500" placeholder="Enter your password">
+                    <div id="passwordError" class="error-message hidden"></div> </div>
+                <button type="submit" class="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-black text-white hover:bg-gray-800 dark:bg-gray-100 dark:text-black dark:hover:bg-gray-300 px-4 py-2">Login</button>
+            </form>
+
+            <div id="responseMessage" class="response-message hidden"></div>
+
+            <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+                Don't have an account?
+                <a href="#" class="font-medium text-black dark:text-white hover:underline">Sign up</a>
+                instead
+            </p>
+
+             <div id="signUpButtonContainer" class="mt-4 text-center hidden">
+                 <button id="signUpButton" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2">Sign Up</button>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 mt-12 py-8 text-black dark:text-gray-100">
+        <div class="container mx-auto px-4 text-center">
+            <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8">
+                <a href="#" class="transition-colors hover:text-gray-900 dark:hover:text-white text-gray-600 dark:text-gray-400">Home</a>
+                <a href="#" class="transition-colors hover:text-gray-900 dark:hover:text-white text-gray-600 dark:text-gray-400">Blog</a>
+                <a href="#" class="transition-colors hover:text-gray-900 dark:hover:text-white text-gray-600 dark:text-gray-400">About Us</a>
+            </div>
+            <p class="mt-6 text-sm text-gray-500 dark:text-gray-400">&copy; 2023 Your Company. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Dark Mode Toggle Script - Toggles 'dark' class on the html element
+        const darkModeToggleDesktop = document.getElementById('darkModeToggleDesktop');
+        const darkModeToggleMobile = document.getElementById('darkModeToggleMobile');
+        const htmlElement = document.documentElement; // Target the html element
+
+        // Function to apply the theme
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                htmlElement.classList.add('dark');
+                // Add light mode body background class when switching to dark
+                 document.body.classList.remove('bg-white');
+            } else {
+                htmlElement.classList.remove('dark');
+                 // Add light mode body background class when switching to light
+                document.body.classList.add('bg-white');
+            }
+             // Save preference to localStorage
+            localStorage.setItem('theme', theme);
+        }
+
+        // Check for saved theme in localStorage on load
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            applyTheme(currentTheme);
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            // If no theme saved, check OS preference and apply/save
+            applyTheme('dark');
+        } else {
+             // Default to light if no preference is found
+             applyTheme('light');
+        }
+
+
+        // Function to toggle the theme
+        function toggleDarkMode() {
+            if (htmlElement.classList.contains('dark')) {
+                applyTheme('light');
+            } else {
+                applyTheme('dark');
+            }
+        }
+
+        // Add event listeners to both buttons
+        darkModeToggleDesktop.addEventListener('click', toggleDarkMode);
+        darkModeToggleMobile.addEventListener('click', toggleDarkMode);
+
+
+        // Mobile Menu Script
+        const mobileMenuTrigger = document.getElementById('mobileMenuTrigger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuClose = document.getElementById('mobileMenuClose');
+
+        mobileMenuTrigger.addEventListener('click', () => {
+            mobileMenu.classList.remove('translate-x-full');
+            mobileMenu.classList.add('translate-x-0');
+        });
+
+        mobileMenuClose.addEventListener('click', () => {
+             mobileMenu.classList.remove('translate-x-0');
+            mobileMenu.classList.add('translate-x-full');
+        });
+
+        // Close mobile menu when a link or button is clicked (optional)
+        const mobileNavItems = mobileMenu.querySelectorAll('a, button');
+        mobileNavItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Small delay to allow navigation/action before closing animation
+                 setTimeout(() => {
+                     mobileMenu.classList.remove('translate-x-0');
+                     mobileMenu.classList.add('translate-x-full');
+                 }, 200); // Adjust delay as needed
+            });
+        });
+
+
+        // --- Login Form Validation and Simulation Script ---
+
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const responseMessage = document.getElementById('responseMessage');
+        const signUpButtonContainer = document.getElementById('signUpButtonContainer');
+        const signUpButton = document.getElementById('signUpButton');
+
+        // Simulated User Database (replace with actual API call in a real application)
+        const users = {
+            "test@example.com": "Password123",
+            "user@domain.com": "SecurePass456"
+        };
+
+        // Function to display validation errors
+        function displayError(element, message) {
+            element.textContent = message;
+            element.classList.remove('hidden');
+        }
+
+        // Function to hide validation errors
+        function hideError(element) {
+            element.textContent = '';
+            element.classList.add('hidden');
+        }
+
+        // Function to display general response messages
+        function displayResponseMessage(message, type) {
+            responseMessage.textContent = message;
+            responseMessage.className = 'response-message'; // Reset classes
+            responseMessage.classList.add(type); // Add type class (success, error, info)
+            responseMessage.classList.remove('hidden');
+        }
+
+         // Function to hide general response messages
+        function hideResponseMessage() {
+            responseMessage.textContent = '';
+            responseMessage.classList.add('hidden');
+            responseMessage.className = 'response-message'; // Reset classes
+        }
+
+        // Function to show the sign-up button
+        function showSignUpButton() {
+            signUpButtonContainer.classList.remove('hidden');
+        }
+
+        // Function to hide the sign-up button
+        function hideSignUpButton() {
+            signUpButtonContainer.classList.add('hidden');
+        }
+
+        // Add event listener for form submission
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Reset previous errors and messages
+            hideError(emailError);
+            hideError(passwordError);
+            hideResponseMessage();
+            hideSignUpButton();
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            let isValid = true;
+
+            // Client-side Email Validation (simple check)
+            if (!email || !email.includes('@') || !email.includes('.')) {
+                displayError(emailError, 'Please enter a valid email address.');
+                isValid = false;
+            }
+
+            // Client-side Password Validation
+            if (!password) {
+                 displayError(passwordError, 'Password is required.');
+                 isValid = false;
+            } else {
+                if (password.length < 8) {
+                    displayError(passwordError, 'Password must be at least 8 characters long.');
+                    isValid = false;
+                }
+                if (!/\d/.test(password)) {
+                    displayError(passwordError, 'Password must contain at least one number.');
+                    isValid = false;
+                }
+                if (!/[A-Z]/.test(password)) {
+                    displayError(passwordError, 'Password must contain at least one capital letter.');
+                    isValid = false;
+                }
+            }
+
+
+            if (isValid) {
+                // Simulate Server-Side Check (replace with actual API call)
+                simulateLogin(email, password);
+            }
+        });
+
+        // Simulate Login Function
+        function simulateLogin(email, password) {
+            // Simulate network delay
+            setTimeout(() => {
+                if (users.hasOwnProperty(email)) {
+                    // Email exists
+                    if (users[email] === password) {
+                        // Password matches - Simulated Successful Login
+                        displayResponseMessage('Login successful! Redirecting...', 'success');
+                        // In a real app, you would redirect the user here
+                        // window.location.href = '/dashboard';
+                    } else {
+                        // Password does not match - Simulated Incorrect Password
+                        displayResponseMessage('Incorrect password. Please try again.', 'error');
+                    }
+                } else {
+                    // Email not found - Simulated Email not signed up
+                    displayResponseMessage('Email not found. Please sign up.', 'info');
+                    showSignUpButton(); // Show the sign-up button
+                }
+            }, 1000); // Simulate 1 second delay
+        }
+
+        // Optional: Add event listener to the Sign Up button
+        signUpButton.addEventListener('click', function() {
+            // In a real app, you would redirect to the sign-up page
+            alert('Redirecting to sign-up page...'); // Using alert for simulation
+            // window.location.href = '/signup';
+        });
+
+
+    </script>
+
+</body>
+</html>
